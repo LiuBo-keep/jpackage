@@ -1,0 +1,111 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>org.example</groupId>
+    <artifactId>jpackage</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>jpackahe</name>
+    <url>http://maven.apache.org</url>
+
+    <properties>
+        <app.name>MyApp</app.name>
+        <app.version>1.0.0</app.version>
+        <main.class>com.example.App</main.class>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- 生成可运行 jar -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>${main.class}</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+
+            <!-- 调用 jpackage -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>jpackage</id>
+                        <phase>package</phase>
+                        <configuration>
+                            <target>
+                                <exec executable="jpackage">
+                                    <!--打包应用名称-->
+                                    <arg value="--name"/>
+                                    <arg value="${app.name}"/>
+                                    <!--打包应用版本-->
+                                    <arg value="--app-version"/>
+                                    <arg value="${app.version}"/>
+                                    <!--打包jar位置-->
+                                    <arg value="--input"/>
+                                    <arg value="${project.build.directory}"/>
+                                    <!--打包jar名称-->
+                                    <arg value="--main-jar"/>
+                                    <arg value="${project.build.finalName}.jar"/>
+                                    <!--打包jar的main类-->
+                                    <arg value="--main-class"/>
+                                    <arg value="${main.class}"/>
+                                    <!--打包完成输出位置-->
+                                    <arg value="--dest"/>
+                                    <arg value="${project.build.directory}/installer"/>
+                                    <!--打包类型-->
+                                    <arg value="--type"/>
+                                    <arg value="exe"/>
+
+                                    <!--win用户安装 添加到「开始快捷方式」-->
+                                    <arg value="--win-shortcut"/>
+                                    <!--win用户安装 添加到「开始菜单」-->
+                                    <arg value="--win-menu"/>
+                                    <!--win用户安装 开始菜单里的文件夹名-->
+                                    <arg value="--win-menu-group"/>
+                                    <arg value="${app.name}"/>
+                                    <!--win用户安装 安装时允许用户选择目录-->
+                                    <arg value="--win-dir-chooser"/>
+                                    <!--win用户安装 添加协议-->
+                                    <arg value="--license-file"/>
+                                    <arg value="${project.basedir}/LICENSE.txt"/>
+
+                                    <arg value="--vendor"/>
+                                    <arg value="Aidan Studio"/>
+                                    <arg value="--description"/>
+                                    <arg value="Offline desktop tool built with JavaFX"/>
+
+                                </exec>
+                            </target>
+                        </configuration>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
